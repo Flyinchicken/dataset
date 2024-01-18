@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { InjectPrismaClient } from 'src/prisma/prisma.decorators';
 
 @Injectable()
 export class UsersService {
     // Inject prisma service into UserService, so we can access the prisma service to query the database
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(@InjectPrismaClient() private readonly prisma) { }
 
     findAll() {
         return 'New All users in the databank.';
