@@ -12,6 +12,9 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// --------------------- DEFINITION OF MODELS --------------------- 
+// a model represents a TABLE in relational db or a COLLECTION in MongoDB
+
 // User
 model User {
   id      String  @id @default(auto()) @map("_id") @db.ObjectId
