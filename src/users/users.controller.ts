@@ -1,26 +1,26 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 
 @Controller('users')
 export class UsersController {
     constructor(private readonly usersService: UsersService) { }
 
     @Get()
+    findUnique(@Body() userWhereUniqueInput: Prisma.UserWhereUniqueInput) {
+        return this.usersService.findUnique(userWhereUniqueInput);
+    }
+
+    @Get('all')
     findAll() {
         return this.usersService.findAll();
     }
 
-    @Get(':email')
-    findByEmail(@Param("email") email: string) {
-        return this.usersService.findByEmail(email);
-    }
-
     @Post('create')
-    async signupUser(
+    async createUser(
         @Body() userData: { email: string; name?: string; address?: string; },
     ): Promise<User> {
-        return this.usersService.signupUser(userData);
+        return this.usersService.createUser(userData);
     }
 
     @Delete(':email')

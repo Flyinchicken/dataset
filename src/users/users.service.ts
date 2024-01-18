@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { InjectPrismaClient } from 'src/prisma/prisma.decorators';
 
@@ -7,15 +7,33 @@ export class UsersService {
     // Inject prisma service into UserService, so we can access the prisma service to query the database
     constructor(@InjectPrismaClient() private readonly prisma) { }
 
-    findAll() {
-        return 'New All users in the databank.';
+    async findUnique(userWhereUniqueInput: Prisma.UserWhereUniqueInput): Promise<User> {
+        const user = await this.prisma.user.findUnique({
+            where: userWhereUniqueInput
+        });
+
+        if (!user) {
+            throw new NotFoundException();
+        }
+        return user;
     }
 
-    findByEmail(email) {
-        return `user with email ${email}`;
+    async findAll(): Promise<User[]> {
+        const users = await this.prisma.user.findMany();
+        return users;
     }
 
-    async signupUser(data: Prisma.UserCreateInput): Promise<User> {
+    async createUser(data: Prisma.UserCreateInput): Promise<User> {
+        const user = await this.prisma.user.findUnique({
+            where: {
+                email: data.email
+            }
+        });
+
+        if (user) {
+            throw new ConflictException();
+        }
+
         return this.prisma.user.create({
             data,
         });
