@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { User } from '@prisma/client';
 
 @Controller('users')
 export class UsersController {
@@ -16,13 +17,15 @@ export class UsersController {
     }
 
     @Post('create')
-    create(createUserDto) {
-        return this.usersService.create(createUserDto);
+    async signupUser(
+        @Body() userData: { email: string; name?: string; address?: string; },
+    ): Promise<User> {
+        return this.usersService.signupUser(userData);
     }
 
     @Delete(':email')
-    delete(@Param("email") email: string) {
-        return this.usersService.delete(email);
+    async deleteUser(@Param('email') email: string): Promise<User> {
+        return this.usersService.deleteUser({ email: email });
     }
 
     @Patch(':email')
