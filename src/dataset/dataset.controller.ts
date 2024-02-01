@@ -13,7 +13,7 @@ export class DatasetController {
 
     @Post()
     @UseInterceptors(FileInterceptor('file'))
-    uploadCSV(@UploadedFile() file: Express.Multer.File, @Body('details') detail) {
-        return this.datasetService.uploadCSV(file, detail);
+    uploadCSV(@UploadedFile() file: Express.Multer.File, @Body('details') details) {
+        return this.datasetService.uploadCSV(file, details);
     }
 }
