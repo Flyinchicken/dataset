@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { pl } from 'nodejs-polars'
+import { DataFrame, pl } from 'nodejs-polars'
+import { inferSchema, initParser } from 'udsv';
 
 @Injectable()
 export class DatasetService {
@@ -15,6 +16,16 @@ export class DatasetService {
         const df = pl.readJSON(myjson);
         console.log(df.schema);
         console.log(df.columns)
+        return df;
+    }
+
+    uploadCSV(file: Express.Multer.File, detail) {
+        const csvString = file.buffer.toString();
+        let schema = inferSchema(csvString);
+        let parser = initParser(schema);
+        let typedObjs = parser.typedObjs(csvString);
+        const df = pl.readRecords(typedObjs);
+        console.log(df.schema)
         return df;
     }
 }
